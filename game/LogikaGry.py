@@ -1,5 +1,6 @@
 import random
 
+from game.FalszyweRegulyGry import FalszyweRegulyGry
 from game.RegulyGry import RegulyGry
 
 
@@ -75,3 +76,7 @@ class LogikaGry(RegulyGry):
     def GraPrzegrana(self):
         print(f"Przekroczone liczbę kroków")
         self.setup_game()
+
+
+class FalszywaLogikaGry(LogikaGry, FalszyweRegulyGry):
+    pass

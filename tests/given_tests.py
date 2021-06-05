@@ -1,10 +1,12 @@
+import logging
+import sys
 import unittest
 
 from game.LogikaGry import LogikaGry, FalszywaLogikaGry
 
 
 class MainTesting(unittest.TestCase):
-    def test_bad_numbers(self):
+    def test1_bad_numbers(self):
         game = LogikaGry()
 
         rn = 1
@@ -14,7 +16,7 @@ class MainTesting(unittest.TestCase):
         print(f"KOD: {game.secret_key}")
         self.assertEqual(game.check_turn([rn, rn, rn, rn]), (0, 0))
 
-    def test_2_bad_pos_2_hit(self):
+    def test3_2_bad_pos_2_hit(self):
         game = LogikaGry()
         test = []
 
@@ -31,31 +33,29 @@ class MainTesting(unittest.TestCase):
         print(f"Input: {test}")
         self.assertEqual(game.check_turn(test), (2, 2))
 
-    def test_2_bad_pos_2_hit_hacked(self):
-        game = FalszywaLogikaGry()
-        test = []
-
-        while game.secret_key[2] == game.secret_key[3]:
-            game.setup_game()
-
-        test = list(game.secret_key)
-
-        temp = test[3]
-        test[3] = test[2]
-        test[2] = temp
-
-        print(f"KOD: {game.secret_key}")
-        print(f"Input: {test}")
-        self.assertEqual(game.check_turn(test), (0, 0))
-
-    def test_4_hit(self):
+    def test4_4_hit(self):
         game = LogikaGry()
 
         test = game.secret_key
         print(f"KOD: {game.secret_key}")
         self.assertEqual(game.check_turn(test), (4, 0))
 
-    def test_bad_input(self):
+    def test5_12_incorrect_end_game(self):
+        with self.assertLogs(level='INFO') as log:
+
+            game = LogikaGry()
+            test = game.secret_key.copy()
+            test.reverse()
+
+            for _ in range(12):
+                game.interact(test)
+
+            # self.assertLogs('Przekrocazone liczbę krokóww!')
+
+
+            self.assertIn('Przekroczone liczbę kroków', log.output[0])
+
+    def test6_bad_input(self):
         game = LogikaGry()
         start = game.current_round
 

@@ -1,9 +1,14 @@
 class RegulyGry:
+    MINIMAL_NUMBER = 1
+    MAXIMAL_NUMBER = 6
+    NUMBER_OF_TRIES = 12
+    CODE_LENGTH = 4
+
     def check(self, input_code: list, secret_code: list):
         count_good_position = 0
         count_good_number = 0
 
-        checked_count = {i + 1: 0 for i in range(6)}
+        checked_count = {i + self.MINIMAL_NUMBER: 0 for i in range(self.MAXIMAL_NUMBER - self.MINIMAL_NUMBER + 1)}
 
         for number_index in range(len(input_code)):
 

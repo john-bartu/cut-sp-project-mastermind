@@ -21,7 +21,8 @@ class LogikaGry(RegulyGry):
         root_logger.addHandler(console_handler)
 
     def generate_new_secret_key(self):
-        self.secret_key = [random.randint(self.MINIMAL_NUMBER, self.MINIMAL_NUMBER) for _ in range(self.CODE_LENGTH)]
+        self.secret_key = [random.randint(self.MINIMAL_NUMBER, self.MAXIMAL_NUMBER) for _ in
+                           range(self.CODE_LENGTH)]
 
     def reset_round_count(self):
         self.current_round = 0
@@ -32,7 +33,7 @@ class LogikaGry(RegulyGry):
         self.history_game.clear()
         self.history_result.clear()
 
-    def parseInput(self, user_raw_input):
+    def parse_input(self, user_raw_input):
         user_input = []
         # parse text to numbers
         for character in user_raw_input:
@@ -74,7 +75,7 @@ class LogikaGry(RegulyGry):
 
     def interact(self, user_raw_input):
         try:
-            user_input = self.parseInput(user_raw_input)
+            user_input = self.parse_input(user_raw_input)
             return self.check_turn(user_input)
         except ValueError:
             return 0, 0

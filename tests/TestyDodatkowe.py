@@ -3,7 +3,7 @@ import unittest
 from game.LogikaGry import LogikaGry, FalszywaLogikaGry
 
 
-class MainTesting(unittest.TestCase):
+class AdditionalTesting(unittest.TestCase):
     def test_2_bad_pos_2_hit_hacked(self):
         game = FalszywaLogikaGry()
         test = []

@@ -24,7 +24,7 @@ class LogikaGry(RegulyGry):
         self.history_game.clear()
         self.history_result.clear()
 
-    def interact(self, user_raw_input):
+    def parseInput(self, user_raw_input):
         user_input = []
         # parse text to numbers
         for character in user_raw_input:
@@ -45,6 +45,9 @@ class LogikaGry(RegulyGry):
         if len(user_input) > 4:
             raise ValueError("Zbyt duża ilość cyfr")
 
+        return user_input
+
+    def check_turn(self, user_input):
         result = self.check(user_input, self.secret_key)
 
         if result[0] == 4:
@@ -56,6 +59,14 @@ class LogikaGry(RegulyGry):
 
         if self.current_round == 12:
             self.GraPrzegrana()
+        return result
+
+    def interact(self, user_raw_input):
+        try:
+            user_input = self.parseInput(user_raw_input)
+            self.check_turn(user_input)
+        except ValueError:
+            print("Zły input")
 
     def GraWygrana(self):
         print(f"Wygrana!")

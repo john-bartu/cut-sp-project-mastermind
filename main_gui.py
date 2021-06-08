@@ -3,7 +3,6 @@ import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 
-
 # class ImgWidget2(QtGui.im):
 #
 #     def __init__(self, parent=None):
@@ -13,10 +12,11 @@ from PyQt5.QtCore import Qt
 #     def paintEvent(self, event):
 #         painter = QtGui.QPainter(self)
 #         painter.drawPixmap(0, 0, self.pic)
+from game.Kontroler import Kontroler
 
 
 class TableModel(QtCore.QAbstractTableModel):
-    header_labels = ['1', '2', '3', '4']
+    header_labels = ['1', '2', '3', '4', 'result']
 
     def __init__(self, data):
         super(TableModel, self).__init__()
@@ -29,8 +29,10 @@ class TableModel(QtCore.QAbstractTableModel):
     def data(self, index, role):
 
         if role == Qt.DecorationRole:
-            # return self._data[index.row()][index.column()]
-            return QtGui.QImage(f"icons/{self._data[index.row()][index.column()]}.png")
+            # return QtGui.QImage(f"icons/{self._data[index.row()][index.column()]}.png")
+            pass
+        if role == Qt.DisplayRole:
+            return self._data[index.row()][index.column()]
 
     def rowCount(self, index):
         # The length of the outer list.
@@ -48,6 +50,7 @@ class TableModel(QtCore.QAbstractTableModel):
 class UiMainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
+        self.controller = Kontroler()
         self.setup_ui()
 
     def setup_ui(self):
@@ -87,7 +90,7 @@ class UiMainWindow(QtWidgets.QMainWindow):
         self.input_code.setMaxLength(10)
         self.input_code.setFrame(True)
         self.input_code.setAlignment(QtCore.Qt.AlignCenter)
-        self.input_code.setObjectName("input_code")
+        self.input_code.setObjectName("input_digit")
 
         self.horizontalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.horizontalLayoutWidget.setGeometry(QtCore.QRect(120, 500, 271, 41))
@@ -160,6 +163,17 @@ class UiMainWindow(QtWidgets.QMainWindow):
 
     def action_check(self):
         print("Check clicked")
+        self.controller.game_logic.interact(self.input_code.text())
+
+        data = [
+            [*self.controller.game_logic.history_game[step], str(self.controller.game_logic.history_result[step])] for
+            step in
+            range(self.controller.game_logic.current_round)
+        ]
+        model = TableModel(data)
+        self.table_board.setModel(model)
+        for i in range(len(data[0])):
+            self.table_board.setColumnWidth(i, 10)
 
 
 if __name__ == "__main__":

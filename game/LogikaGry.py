@@ -2,6 +2,7 @@ import logging
 import random
 
 from game.FalszyweRegulyGry import FalszyweRegulyGry
+from game.GameExceptions import InputNotCertainTypeError, DigitNotInRangeError, CodeLengthNotEqualError, InputError
 from game.RegulyGry import RegulyGry
 from game.Wiadomosci import Wiadomosci
 
@@ -32,6 +33,7 @@ class LogikaGry(RegulyGry):
         self.reset_round_count()
         self.history_game.clear()
         self.history_result.clear()
+        self.current_round = 0
 
     def parse_input(self, user_raw_input):
         user_input = []
@@ -43,17 +45,13 @@ class LogikaGry(RegulyGry):
                 if number - self.MINIMAL_NUMBER in range(self.MAXIMAL_NUMBER - self.MINIMAL_NUMBER + 1):
                     user_input.append(number)
                 else:
-                    raise ValueError(
-                        f"Wpisana liczba jest spoza zakresu {self.MINIMAL_NUMBER}-{self.MAXIMAL_NUMBER}: " + character)
+                    raise DigitNotInRangeError(number, self.MINIMAL_NUMBER, self.MAXIMAL_NUMBER)
 
             except ValueError:
-                raise ValueError("Wpisane dane wejściowe nie są cyfrą: " + character)
+                raise InputNotCertainTypeError(character)
 
-        if len(user_input) < self.CODE_LENGTH:
-            raise ValueError("Zbyt mała ilość cyfr")
-
-        if len(user_input) > self.CODE_LENGTH:
-            raise ValueError("Zbyt duża ilość cyfr")
+        if len(user_input) != self.CODE_LENGTH:
+            raise CodeLengthNotEqualError(len(user_input), self.CODE_LENGTH)
 
         return user_input
 
@@ -77,7 +75,7 @@ class LogikaGry(RegulyGry):
         try:
             user_input = self.parse_input(user_raw_input)
             return self.check_turn(user_input)
-        except ValueError:
+        except InputError:
             return 0, 0
 
     def game_won(self):

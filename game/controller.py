@@ -1,9 +1,10 @@
 import random
 
-from game.LogikaGry import LogikaGry, FalszywaLogikaGry
+from game.cheat_logic import CheatGameLogic
+from game.logic import GameLogic
 
 
-class Kontroler:
+class GameController:
     HACKED_CHANGE = 0.1
     game_logic = None
 
@@ -11,6 +12,6 @@ class Kontroler:
         random_number = random.random()
 
         if random_number > self.HACKED_CHANGE:
-            self.game_logic = LogikaGry()
+            self.game_logic = GameLogic()
         else:
-            self.game_logic = FalszywaLogikaGry()
+            self.game_logic = CheatGameLogic()

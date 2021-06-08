@@ -1,16 +1,16 @@
 import logging
 import random
 
-from game.FalszyweRegulyGry import FalszyweRegulyGry
-from game.GameExceptions import InputNotCertainTypeError, DigitNotInRangeError, CodeLengthNotEqualError, InputError
-from game.RegulyGry import RegulyGry
-from game.Wiadomosci import Wiadomosci
+from game.cheat_rules import CheatGameRules
+from game.exceptions import InputNotCertainTypeError, DigitNotInRangeError, CodeLengthNotEqualError, InputError
+from game.rules import GameRules
+from game.messages import Messages
 
 
-class LogikaGry(RegulyGry):
+class GameLogic(GameRules):
     history_game = []
     history_result = []
-    secret_key = ()
+    additional_tests = ()
     current_round = 0
 
     def __init__(self):
@@ -22,8 +22,8 @@ class LogikaGry(RegulyGry):
         root_logger.addHandler(console_handler)
 
     def generate_new_secret_key(self):
-        self.secret_key = [random.randint(self.MINIMAL_NUMBER, self.MAXIMAL_NUMBER) for _ in
-                           range(self.CODE_LENGTH)]
+        self.additional_tests = [random.randint(self.MINIMAL_NUMBER, self.MAXIMAL_NUMBER) for _ in
+                                 range(self.CODE_LENGTH)]
 
     def reset_round_count(self):
         self.current_round = 0
@@ -56,7 +56,7 @@ class LogikaGry(RegulyGry):
         return user_input
 
     def check_turn(self, user_input):
-        result = self.check(user_input, self.secret_key)
+        result = self.check(user_input, self.additional_tests)
 
         if result[0] == self.CODE_LENGTH:
             self.game_won()
@@ -79,13 +79,9 @@ class LogikaGry(RegulyGry):
             return 0, 0
 
     def game_won(self):
-        logging.info(Wiadomosci.MSG_END_GAME_WIN)
+        logging.info(Messages.MSG_END_GAME_WIN)
         self.setup_game()
 
     def game_lost(self):
-        logging.info(Wiadomosci.MSG_END_GAME_LOSE)
+        logging.info(Messages.MSG_END_GAME_LOSE)
         self.setup_game()
-
-
-class FalszywaLogikaGry(LogikaGry, FalszyweRegulyGry):
-    pass

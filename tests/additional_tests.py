@@ -1,23 +1,24 @@
 import unittest
 
-from game.LogikaGry import LogikaGry, FalszywaLogikaGry
+from game.logic import GameLogic
+from game.cheat_logic import CheatGameLogic
 
 
-class AdditionalTesting(unittest.TestCase):
+class AdditionalTests(unittest.TestCase):
     def test_2_bad_pos_2_hit_hacked(self):
-        game = FalszywaLogikaGry()
+        game = CheatGameLogic()
         test = []
 
-        while game.secret_key[2] == game.secret_key[3]:
+        while game.additional_tests[2] == game.additional_tests[3]:
             game.setup_game()
 
-        test = list(game.secret_key)
+        test = list(game.additional_tests)
 
         temp = test[3]
         test[3] = test[2]
         test[2] = temp
 
-        print(f"KOD: {game.secret_key}")
+        print(f"KOD: {game.additional_tests}")
         print(f"Input: {test}")
         self.assertEqual(game.check_turn(test), (0, 0))
 

@@ -1,6 +1,6 @@
-from game.LogikaGry import LogikaGry
+from game.logic import GameLogic
 
-game = LogikaGry()
+game = GameLogic()
 
 while True:
     myInput = input()
@@ -11,5 +11,5 @@ while True:
         print(f"Sprobuj ponownie...")
 
     for i in range(len(game.history_game)):
-        print(f"{i}]: {game.history_game[i]} | {game.history_result[i]} ~~ {game.secret_key}")
+        print(f"{i}]: {game.history_game[i]} | {game.history_result[i]} ~~ {game.additional_tests}")
     print("------------------------------------------------------")

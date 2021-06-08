@@ -1,4 +1,4 @@
-class RegulyGry:
+class GameRules:
     MINIMAL_NUMBER = 1
     MAXIMAL_NUMBER = 6
     NUMBER_OF_TRIES = 12

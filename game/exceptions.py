@@ -41,7 +41,7 @@ class DigitNotInRangeError(InputError):
     Attributes:
         code_digit -- input code_digit which caused the error
         min_length -- minimal code length
-        min_length -- minimal code length
+        max_length -- maximal code length
     """
 
     def __init__(self, code_digit, min_length=1, max_length=6):

@@ -1,6 +1,6 @@
-from TestyDodatkowe import AdditionalTesting
-from TestyZadane import MainTesting
+from additional_tests import AdditionalTests
+from main_tests import MainTests
 
 if __name__ == '__main__':
-    AdditionalTesting()
-    MainTesting()
+    AdditionalTests()
+    MainTests()

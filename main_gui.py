@@ -3,16 +3,7 @@ import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 
-# class ImgWidget2(QtGui.im):
-#
-#     def __init__(self, parent=None):
-#         super(ImgWidget2, self).__init__(parent)
-#         self.pic = QtGui.QPixmap(imagePath)
-#
-#     def paintEvent(self, event):
-#         painter = QtGui.QPainter(self)
-#         painter.drawPixmap(0, 0, self.pic)
-from game.Kontroler import Kontroler
+from game.controller import GameController
 
 
 class TableModel(QtCore.QAbstractTableModel):
@@ -50,7 +41,7 @@ class TableModel(QtCore.QAbstractTableModel):
 class UiMainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
-        self.controller = Kontroler()
+        self.controller = GameController()
         self.setup_ui()
 
     def setup_ui(self):

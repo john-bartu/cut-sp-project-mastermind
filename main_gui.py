@@ -6,10 +6,12 @@ from PyQt5.QtWidgets import QMessageBox
 
 from game.controller import GameController
 
+
 class IconDelegate(QtWidgets.QStyledItemDelegate):
     def initStyleOption(self, option, index):
         super().initStyleOption(option, index)
         option.decorationSize = option.rect.size()
+
 
 class TableModel(QtCore.QAbstractTableModel):
     header_labels = ['', '', '', '', 'C', 'P']
@@ -54,20 +56,51 @@ class TableModel(QtCore.QAbstractTableModel):
         return Qt.ItemIsEnabled
 
 
-def showdialog():
+def show_win_dialog():
     msg = QMessageBox()
-    msg.setText("This is a message box")
-    msg.setInformativeText("This is additional information")
-    msg.setWindowTitle("MessageBox demo")
+    msg.setWindowTitle("Game Won!")
+    msg.setText("You Win!")
+    msg.setInformativeText("Congratulations you guess the code.")
+    msg.setStandardButtons(QMessageBox.Ok)
+    msg.exec_()
 
+
+def show_loose_dialog():
+    msg = QMessageBox()
+    msg.setWindowTitle("Game Lost!")
+    msg.setText("You Lose!")
+    msg.setInformativeText("Unfortunately you haven't guess the code in 12 tries.")
+    msg.setStandardButtons(QMessageBox.Ok)
+    msg.exec_()
+
+
+def show_cheat_dialog(is_computer_cheating):
+    msg = QMessageBox()
+    msg.setWindowTitle("Computer cheating test")
+
+    if is_computer_cheating:
+        msg.setText("Correct!")
+        msg.setInformativeText("Oh no! You got me!")
+    else:
+        msg.setText("Tere fere!")
+        msg.setInformativeText("You are wrong! I am not cheating!")
+
+    msg.setStandardButtons(QMessageBox.Ok)
+    msg.exec_()
+
+
+def show_dialog():
+    msg = QMessageBox()
+    msg.setWindowTitle("Window Tittle")
+    msg.setText("Header")
+    msg.setInformativeText("Some text")
     msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-    msg.buttonClicked.connect(msgbtn)
+    msg.buttonClicked.connect(message_button)
+    return_value = msg.exec_()
+    print("value of pressed message box button:", return_value)
 
-    retval = msg.exec_()
-    print("value of pressed message box button:", retval)
 
-
-def msgbtn(i):
+def message_button(i):
     print("Button pressed is:", i.text())
 
 
@@ -172,30 +205,12 @@ class UiMainWindow(QtWidgets.QMainWindow):
         self.button_reset.setText(_translate("MainWindow", "Reset"))
 
     def action_reset(self):
-        print("Reset clicked")
-        self.test_table()
-
-    def test_table(self):
-        data = [
-            [1, 2, 3, 4] for _ in range(12)
-        ]
-        model = TableModel(data)
-        self.table_board.setModel(model)
-        self.table_board.setColumnWidth(0, 1)
-        self.table_board.setColumnWidth(1, 1)
-        self.table_board.setColumnWidth(2, 1)
-        self.table_board.setColumnWidth(3, 1)
-        self.table_board.setColumnWidth(4, 1)
-        self.table_board.setColumnWidth(5, 1)
+        self.controller.game_logic.reset_round_count()
 
     def action_cheater(self):
-        if self.controller.check_if_cheating():
-            showdialog()
-        else:
-            showdialog()
+        show_cheat_dialog(self.controller.check_if_cheating())
 
     def action_check(self):
-        print("Check clicked")
         self.controller.game_logic.interact(self.input_code.text())
 
         data = [

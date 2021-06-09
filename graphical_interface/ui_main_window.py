@@ -178,9 +178,7 @@ class UiMainWindow(QtWidgets.QMainWindow):
 
     def update_table(self):
         data = [
-            [*self.controller.game_logic.history_game[step], *(self.controller.game_logic.history_result[step])] for
-            step in
-            range(len(self.controller.game_logic.history_game))
+            [*self.controller.game_logic.history_game[step], *(self.controller.game_logic.history_result[step])] for step in range(len(self.controller.game_logic.history_game))
         ]
         data.reverse()
         model = TableModel(data)

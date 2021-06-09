@@ -30,13 +30,13 @@ class MainTests(unittest.TestCase):
     def assertIn(self, member, container, msg=None):
         """Just like self.assertTrue(a in b), but with a nicer default message and tests all outputs"""
         found = False
-        standardMsg = '%s not found in %s' % (safe_repr(member), safe_repr(container))
+        standard_message = '%s not found in %s' % (safe_repr(member), safe_repr(container))
         for row in container:
             if member in row:
                 found = True
 
         if not found:
-            self.fail(self._formatMessage(msg, standardMsg))
+            self.fail(self._formatMessage(msg, standard_message))
 
     @repeat_test(100)
     def test1_bad_numbers(self):

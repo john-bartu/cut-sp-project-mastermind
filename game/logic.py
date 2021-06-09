@@ -58,7 +58,10 @@ Validation of user input from string to Int array
             try:
                 number = int(character)
 
-                if number - self.MINIMAL_NUMBER in range(self.MAXIMAL_NUMBER - self.MINIMAL_NUMBER + 1):
+                shift_number = lambda x: x - self.MINIMAL_NUMBER
+                shifted_range = lambda: range(self.MAXIMAL_NUMBER - self.MINIMAL_NUMBER + 1)
+
+                if shift_number(number) in shifted_range():
                     user_input.append(number)
                 else:
                     raise DigitNotInRangeError(number, self.MINIMAL_NUMBER, self.MAXIMAL_NUMBER)
@@ -81,10 +84,6 @@ Enter user input into the game, adds game history and test if input is valid and
             user_input = self.parse_input(user_raw_input)
             result = self.check(user_input, self.secret_code)
 
-            if result[0] == self.CODE_LENGTH:
-                self.game_state = GameState.WON
-                logging.info(Messages.MSG_END_GAME_WIN)
-
             self.history_result.append(result)
             self.history_game.append(user_input)
 
@@ -93,6 +92,10 @@ Enter user input into the game, adds game history and test if input is valid and
             if self.current_round == self.NUMBER_OF_TRIES:
                 self.game_state = GameState.LOST
                 logging.info(Messages.MSG_END_GAME_LOSE)
+
+            if result[0] == self.CODE_LENGTH:
+                self.game_state = GameState.WON
+                logging.info(Messages.MSG_END_GAME_WIN)
 
             return result
         except InputError:

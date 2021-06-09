@@ -1,4 +1,5 @@
 class InputError(Exception):
+    """Used for exceptions for functions which are validating user input"""
     pass
 
 

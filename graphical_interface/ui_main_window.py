@@ -148,7 +148,7 @@ class UiMainWindow(QtWidgets.QMainWindow):
 
     def translate_ui(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.setWindowTitle(_translate("MainWindow", "MasterMind - Game"))
         self.setToolTip(_translate("MainWindow", "<html><head/><body><p><br/></p></body></html>"))
         self.input_code.setText(_translate("MainWindow", "1111"))
         self.button_check.setText(_translate("MainWindow", "Check"))
@@ -178,7 +178,8 @@ class UiMainWindow(QtWidgets.QMainWindow):
 
     def update_table(self):
         data = [
-            [*self.controller.game_logic.history_game[step], *(self.controller.game_logic.history_result[step])] for step in range(len(self.controller.game_logic.history_game))
+            [*self.controller.game_logic.history_game[step], *(self.controller.game_logic.history_result[step])] for
+            step in range(len(self.controller.game_logic.history_game))
         ]
         data.reverse()
         model = TableModel(data)

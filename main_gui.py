@@ -2,28 +2,44 @@ import sys
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QMessageBox
 
 from game.controller import GameController
 
+class IconDelegate(QtWidgets.QStyledItemDelegate):
+    def initStyleOption(self, option, index):
+        super().initStyleOption(option, index)
+        option.decorationSize = option.rect.size()
 
 class TableModel(QtCore.QAbstractTableModel):
-    header_labels = ['1', '2', '3', '4', 'result']
+    header_labels = ['', '', '', '', 'C', 'P']
 
     def __init__(self, data):
         super(TableModel, self).__init__()
         self._data = data
 
     def headerData(self, section: int, orientation, role=Qt.DisplayRole):
+
+        if role == Qt.DecorationRole and orientation == Qt.Horizontal:
+            if section == 4:
+                return QtGui.QImage(f"icons/ok.png")
+            if section == 5:
+                return QtGui.QImage(f"icons/pos.png")
         if role == Qt.DisplayRole and orientation == Qt.Horizontal:
             return self.header_labels[section]
 
     def data(self, index, role):
 
+        if role == Qt.TextAlignmentRole:
+            return Qt.AlignCenter
+
         if role == Qt.DecorationRole:
-            # return QtGui.QImage(f"icons/{self._data[index.row()][index.column()]}.png")
-            pass
+            if index.column() <= 3:
+                return QtGui.QImage(f"icons/{self._data[index.row()][index.column()]}.png")
+
         if role == Qt.DisplayRole:
-            return self._data[index.row()][index.column()]
+            if index.column() > 3:
+                return self._data[index.row()][index.column()]
 
     def rowCount(self, index):
         # The length of the outer list.
@@ -36,6 +52,23 @@ class TableModel(QtCore.QAbstractTableModel):
 
     def flags(self, index):
         return Qt.ItemIsEnabled
+
+
+def showdialog():
+    msg = QMessageBox()
+    msg.setText("This is a message box")
+    msg.setInformativeText("This is additional information")
+    msg.setWindowTitle("MessageBox demo")
+
+    msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+    msg.buttonClicked.connect(msgbtn)
+
+    retval = msg.exec_()
+    print("value of pressed message box button:", retval)
+
+
+def msgbtn(i):
+    print("Button pressed is:", i.text())
 
 
 class UiMainWindow(QtWidgets.QMainWindow):
@@ -62,6 +95,10 @@ class UiMainWindow(QtWidgets.QMainWindow):
 
         self.table_board = QtWidgets.QTableView(self.centralwidget)
         self.table_board.setGeometry(QtCore.QRect(10, 10, 381, 481))
+        self.table_board.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.table_board.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        delegate = IconDelegate(self.table_board)
+        self.table_board.setItemDelegate(delegate)
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(16)
@@ -130,8 +167,8 @@ class UiMainWindow(QtWidgets.QMainWindow):
         self.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.setToolTip(_translate("MainWindow", "<html><head/><body><p><br/></p></body></html>"))
         self.input_code.setText(_translate("MainWindow", "2221"))
-        self.button_check.setText(_translate("MainWindow", "Sprawdź"))
-        self.button_cheater.setText(_translate("MainWindow", "Oszust"))
+        self.button_check.setText(_translate("MainWindow", "Check"))
+        self.button_cheater.setText(_translate("MainWindow", "Cheater"))
         self.button_reset.setText(_translate("MainWindow", "Reset"))
 
     def action_reset(self):
@@ -144,20 +181,25 @@ class UiMainWindow(QtWidgets.QMainWindow):
         ]
         model = TableModel(data)
         self.table_board.setModel(model)
-        self.table_board.setColumnWidth(0, 10)
-        self.table_board.setColumnWidth(1, 10)
-        self.table_board.setColumnWidth(2, 10)
-        self.table_board.setColumnWidth(3, 10)
+        self.table_board.setColumnWidth(0, 1)
+        self.table_board.setColumnWidth(1, 1)
+        self.table_board.setColumnWidth(2, 1)
+        self.table_board.setColumnWidth(3, 1)
+        self.table_board.setColumnWidth(4, 1)
+        self.table_board.setColumnWidth(5, 1)
 
     def action_cheater(self):
-        print("Cheater clicked")
+        if self.controller.check_if_cheating():
+            showdialog()
+        else:
+            showdialog()
 
     def action_check(self):
         print("Check clicked")
         self.controller.game_logic.interact(self.input_code.text())
 
         data = [
-            [*self.controller.game_logic.history_game[step], str(self.controller.game_logic.history_result[step])] for
+            [*self.controller.game_logic.history_game[step], *(self.controller.game_logic.history_result[step])] for
             step in
             range(self.controller.game_logic.current_round)
         ]

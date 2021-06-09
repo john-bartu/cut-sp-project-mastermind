@@ -5,6 +5,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox
 
 from game.controller import GameController
+from game.states import GameState
 
 
 class IconDelegate(QtWidgets.QStyledItemDelegate):
@@ -199,7 +200,7 @@ class UiMainWindow(QtWidgets.QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.setToolTip(_translate("MainWindow", "<html><head/><body><p><br/></p></body></html>"))
-        self.input_code.setText(_translate("MainWindow", "2221"))
+        self.input_code.setText(_translate("MainWindow", "1111"))
         self.button_check.setText(_translate("MainWindow", "Check"))
         self.button_cheater.setText(_translate("MainWindow", "Cheater"))
         self.button_reset.setText(_translate("MainWindow", "Reset"))
@@ -213,15 +214,34 @@ class UiMainWindow(QtWidgets.QMainWindow):
     def action_check(self):
         self.controller.game_logic.interact(self.input_code.text())
 
+        new_state = self.controller.game_logic.get_game_state()
+        if new_state == GameState.WON:
+            show_win_dialog()
+            self.controller.game_logic.setup_game()
+            self.clear_table()
+        elif new_state == GameState.LOST:
+            show_loose_dialog()
+            self.controller.game_logic.setup_game()
+            self.clear_table()
+        else:
+            self.update_table()
+
+    def update_table(self):
         data = [
             [*self.controller.game_logic.history_game[step], *(self.controller.game_logic.history_result[step])] for
             step in
-            range(self.controller.game_logic.current_round)
+            range(len(self.controller.game_logic.history_game))
         ]
+        data.reverse()
         model = TableModel(data)
         self.table_board.setModel(model)
         for i in range(len(data[0])):
-            self.table_board.setColumnWidth(i, 10)
+            self.table_board.setColumnWidth(i, 5)
+
+    def clear_table(self):
+        data = [[]]
+        model = TableModel(data)
+        self.table_board.setModel(model)
 
 
 if __name__ == "__main__":

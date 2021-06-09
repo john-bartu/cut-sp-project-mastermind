@@ -1,18 +1,22 @@
+import random
 import unittest
+from unittest.util import safe_repr
 
+from game.cheat_logic import CheatGameLogic
+from game.controller import GameController
 from game.logic import GameLogic
 from game.messages import Messages
 
 
-def repeat(times):
-    def repeatHelper(f):
-        def callHelper(*args):
+def repeat_test(times):
+    def repeat_helper(f):
+        def call_helper(*args):
             for i in range(0, times):
                 f(*args)
 
-        return callHelper
+        return call_helper
 
-    return repeatHelper
+    return repeat_helper
 
 
 def is_each_digit_occurs_only_once(secret_code):
@@ -23,7 +27,18 @@ def is_each_digit_occurs_only_once(secret_code):
 
 
 class MainTests(unittest.TestCase):
-    @repeat(100)
+    def assertIn(self, member, container, msg=None):
+        """Just like self.assertTrue(a in b), but with a nicer default message and tests all outputs"""
+        found = False
+        standardMsg = '%s not found in %s' % (safe_repr(member), safe_repr(container))
+        for row in container:
+            if member in row:
+                found = True
+
+        if not found:
+            self.fail(self._formatMessage(msg, standardMsg))
+
+    @repeat_test(100)
     def test1_bad_numbers(self):
         game = GameLogic()
 
@@ -35,7 +50,7 @@ class MainTests(unittest.TestCase):
         print(f"Input: {[rn, rn, rn, rn]}")
         self.assertEqual(game.interact([rn, rn, rn, rn]), (0, 0))
 
-    @repeat(100)
+    @repeat_test(100)
     def test2_bad_places(self):
         game = GameLogic()
 
@@ -50,7 +65,7 @@ class MainTests(unittest.TestCase):
         print(f"Input: {test_code}")
         self.assertEqual(game.interact(test_code), (0, 4))
 
-    @repeat(100)
+    @repeat_test(100)
     def test3_2_bad_pos_2_hit(self):
         game = GameLogic()
 
@@ -67,7 +82,7 @@ class MainTests(unittest.TestCase):
         print(f"Input: {test}")
         self.assertEqual(game.interact(test), (2, 2))
 
-    @repeat(100)
+    @repeat_test(100)
     def test4_4_hit(self):
         with self.assertLogs(level='INFO') as log:
             game = GameLogic()
@@ -75,21 +90,23 @@ class MainTests(unittest.TestCase):
             test = game.secret_code
             print(f"SECRET_CODE: {game.secret_code}")
             self.assertEqual(game.interact(test), (4, 0))
-            self.assertIn(Messages.MSG_END_GAME_WIN, log.output[0])
+            self.assertIn(Messages.MSG_END_GAME_WIN, log.output)
 
-    @repeat(100)
+    @repeat_test(100)
     def test5_12_incorrect_end_game(self):
         with self.assertLogs(level='INFO') as log:
             game = GameLogic()
-            test = game.secret_code.copy()
-            test.reverse()
+            test = [random.randrange(1, 7) for _ in range(4)]
+
+            while game.check(test, game.secret_code) != (0, 0):
+                test = [random.randrange(1, 7) for _ in range(4)]
 
             for _ in range(12):
                 game.interact(test)
 
-            self.assertIn(Messages.MSG_END_GAME_LOSE, log.output[0])
+            self.assertIn(Messages.MSG_END_GAME_LOSE, log.output)
 
-    @repeat(100)
+    @repeat_test(100)
     def test6_bad_input(self):
         game = GameLogic()
         start = game.current_round
@@ -101,6 +118,39 @@ class MainTests(unittest.TestCase):
         game.interact("7777")
 
         self.assertEqual(game.current_round, start)
+
+    @repeat_test(100)
+    def test7_check_hacker_wrong(self):
+        controller = GameController()
+        controller.game_logic = GameLogic()
+        self.assertEqual(controller.check_if_cheating(), False)
+
+    @repeat_test(100)
+    def test8_check_hacker_correct(self):
+        controller = GameController()
+        controller.game_logic = CheatGameLogic()
+        self.assertEqual(controller.check_if_cheating(), True)
+
+    @repeat_test(100)
+    def test9_can_reset(self):
+        with self.assertLogs(level='INFO') as log:
+
+            game = GameLogic()
+            test = [random.randrange(1, 7) for _ in range(4)]
+
+            while game.check(test, game.secret_code) != (0, 0):
+                test = [random.randrange(1, 7) for _ in range(4)]
+
+            for _ in range(10):
+                game.interact(test)
+
+            game.reset_round_count()
+
+            for _ in range(5):
+                game.interact(test)
+
+            self.assertNotIn(Messages.MSG_END_GAME_LOSE, log.output)
+            self.assertNotIn(Messages.MSG_END_GAME_WIN, log.output)
 
 
 if __name__ == '__main__':

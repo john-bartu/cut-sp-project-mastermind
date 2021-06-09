@@ -44,6 +44,7 @@ Generates new secret key, reset round count, clears game history and resets game
         self.history_game.clear()
         self.history_result.clear()
         self.game_state = GameState.INCOMPLETE
+        logging.info(f"New secret code is: {self.secret_code}")
 
     def parse_input(self, user_raw_input):
         """

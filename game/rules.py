@@ -5,6 +5,12 @@ class GameRules:
     CODE_LENGTH = 4
 
     def check(self, input_code: list, secret_code: list):
+        """
+Checks if given code is equal secret code and generates return (DigitsInCorrectPlace,OtherCorrectDigits)
+        :param input_code: list of digits
+        :param secret_code: correct list of digits
+        :return: Tuple (DigitsInCorrectPlace,OtherCorrectDigits)
+        """
         count_good_position = 0
         count_good_number = 0
 

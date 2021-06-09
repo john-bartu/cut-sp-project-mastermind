@@ -13,7 +13,7 @@ class MainTests(unittest.TestCase):
             rn += 1
 
         print(f"KOD: {game.secret_code}")
-        self.assertEqual(game.check_turn([rn, rn, rn, rn]), (0, 0))
+        self.assertEqual(game.interact([rn, rn, rn, rn]), (0, 0))
 
     def test3_2_bad_pos_2_hit(self):
         game = GameLogic()
@@ -30,7 +30,7 @@ class MainTests(unittest.TestCase):
 
         print(f"KOD: {game.secret_code}")
         print(f"Input: {test}")
-        self.assertEqual(game.check_turn(test), (2, 2))
+        self.assertEqual(game.interact(test), (2, 2))
 
     def test4_4_hit(self):
         with self.assertLogs(level='INFO') as log:
@@ -38,7 +38,7 @@ class MainTests(unittest.TestCase):
 
             test = game.secret_code
             print(f"KOD: {game.secret_code}")
-            self.assertEqual(game.check_turn(test), (4, 0))
+            self.assertEqual(game.interact(test), (4, 0))
             self.assertIn(Messages.MSG_END_GAME_WIN, log.output[0])
 
     def test5_12_incorrect_end_game(self):

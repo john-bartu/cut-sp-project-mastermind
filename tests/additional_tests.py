@@ -20,7 +20,7 @@ class AdditionalTests(unittest.TestCase):
 
         print(f"KOD: {game.secret_code}")
         print(f"Input: {test}")
-        self.assertEqual(game.check_turn(test), (0, 0))
+        self.assertEqual(game.interact(test), (0, 0))
 
 
 if __name__ == '__main__':

@@ -9,16 +9,16 @@ class AdditionalTests(unittest.TestCase):
         game = CheatGameLogic()
         test = []
 
-        while game.additional_tests[2] == game.additional_tests[3]:
+        while game.secret_code[2] == game.secret_code[3]:
             game.setup_game()
 
-        test = list(game.additional_tests)
+        test = list(game.secret_code)
 
         temp = test[3]
         test[3] = test[2]
         test[2] = temp
 
-        print(f"KOD: {game.additional_tests}")
+        print(f"KOD: {game.secret_code}")
         print(f"Input: {test}")
         self.assertEqual(game.check_turn(test), (0, 0))
 

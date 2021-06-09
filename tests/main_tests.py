@@ -9,26 +9,26 @@ class MainTests(unittest.TestCase):
         game = GameLogic()
 
         rn = 1
-        while rn in game.additional_tests:
+        while rn in game.secret_code:
             rn += 1
 
-        print(f"KOD: {game.additional_tests}")
+        print(f"KOD: {game.secret_code}")
         self.assertEqual(game.check_turn([rn, rn, rn, rn]), (0, 0))
 
     def test3_2_bad_pos_2_hit(self):
         game = GameLogic()
         test = []
 
-        while game.additional_tests[2] == game.additional_tests[3]:
+        while game.secret_code[2] == game.secret_code[3]:
             game.setup_game()
 
-        test = list(game.additional_tests)
+        test = list(game.secret_code)
 
         temp = test[3]
         test[3] = test[2]
         test[2] = temp
 
-        print(f"KOD: {game.additional_tests}")
+        print(f"KOD: {game.secret_code}")
         print(f"Input: {test}")
         self.assertEqual(game.check_turn(test), (2, 2))
 
@@ -36,15 +36,15 @@ class MainTests(unittest.TestCase):
         with self.assertLogs(level='INFO') as log:
             game = GameLogic()
 
-            test = game.additional_tests
-            print(f"KOD: {game.additional_tests}")
+            test = game.secret_code
+            print(f"KOD: {game.secret_code}")
             self.assertEqual(game.check_turn(test), (4, 0))
             self.assertIn(Messages.MSG_END_GAME_WIN, log.output[0])
 
     def test5_12_incorrect_end_game(self):
         with self.assertLogs(level='INFO') as log:
             game = GameLogic()
-            test = game.additional_tests.copy()
+            test = game.secret_code.copy()
             test.reverse()
 
             for _ in range(12):

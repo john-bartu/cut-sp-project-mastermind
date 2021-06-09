@@ -1,29 +1,30 @@
 import logging
 import random
 
-from game.cheat_rules import CheatGameRules
 from game.exceptions import InputNotCertainTypeError, DigitNotInRangeError, CodeLengthNotEqualError, InputError
-from game.rules import GameRules
 from game.messages import Messages
+from game.rules import GameRules
+from game.states import GameState
 
 
 class GameLogic(GameRules):
+    game_state = GameState.INCOMPLETE
     history_game = []
     history_result = []
-    additional_tests = ()
+    secret_code = ()
     current_round = 0
 
     def __init__(self):
-        self.setup_game()
         log_formatter = logging.Formatter("%(levelname)-5s]  %(message)s")
         root_logger = logging.getLogger()
         console_handler = logging.StreamHandler()
         console_handler.setFormatter(log_formatter)
         root_logger.addHandler(console_handler)
+        self.setup_game()
 
     def generate_new_secret_key(self):
-        self.additional_tests = [random.randint(self.MINIMAL_NUMBER, self.MAXIMAL_NUMBER) for _ in
-                                 range(self.CODE_LENGTH)]
+        self.secret_code = [random.randint(self.MINIMAL_NUMBER, self.MAXIMAL_NUMBER) for _ in
+                            range(self.CODE_LENGTH)]
 
     def reset_round_count(self):
         self.current_round = 0
@@ -34,6 +35,8 @@ class GameLogic(GameRules):
         self.history_game.clear()
         self.history_result.clear()
         self.current_round = 0
+        self.game_state = GameState.INCOMPLETE
+        logging.info(self.secret_code)
 
     def parse_input(self, user_raw_input):
         user_input = []
@@ -56,10 +59,11 @@ class GameLogic(GameRules):
         return user_input
 
     def check_turn(self, user_input):
-        result = self.check(user_input, self.additional_tests)
+        result = self.check(user_input, self.secret_code)
 
         if result[0] == self.CODE_LENGTH:
-            self.game_won()
+            self.game_state = GameState.WON
+            logging.info(Messages.MSG_END_GAME_WIN)
 
         self.history_result.append(result)
         self.history_game.append(user_input)
@@ -67,7 +71,8 @@ class GameLogic(GameRules):
         self.current_round += 1
 
         if self.current_round == self.NUMBER_OF_TRIES:
-            self.game_lost()
+            self.game_state = GameState.LOST
+            logging.info(Messages.MSG_END_GAME_LOSE)
 
         return result
 
@@ -78,10 +83,5 @@ class GameLogic(GameRules):
         except InputError:
             return 0, 0
 
-    def game_won(self):
-        logging.info(Messages.MSG_END_GAME_WIN)
-        self.setup_game()
-
-    def game_lost(self):
-        logging.info(Messages.MSG_END_GAME_LOSE)
-        self.setup_game()
+    def get_game_state(self):
+        return self.game_state

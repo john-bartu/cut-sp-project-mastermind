@@ -14,21 +14,36 @@ Checks if given code is equal secret code and generates return (DigitsInCorrectP
         count_good_position = 0
         count_good_number = 0
 
-        checked_count = {i + self.MINIMAL_NUMBER: 0 for i in range(self.MAXIMAL_NUMBER - self.MINIMAL_NUMBER + 1)}
+        dummy_input = input_code.copy()
+        dummy_passcode = secret_code.copy()
+
+        dummy_input2 = []
+        dummy_passcode2 = []
+
+        # Check if digit in right position
+        for index in range(len(dummy_input)):
+            if dummy_input[index] == dummy_passcode[index]:
+                count_good_position += 1
+            else:
+                dummy_input2.append(dummy_input[index])
+                dummy_passcode2.append(dummy_passcode[index])
+
+        # Check other digits if exists in code
+        for number in dummy_input2:
+            if number in dummy_passcode2:
+                count_good_number += 1
+                dummy_passcode2.remove(number)
+
+        return count_good_position, count_good_number
+
+    def check_not_so_easy(self, input_code: list, secret_code: list):
+        count_good_position = 0
+        count_good_number = 0
 
         for number_index in range(len(input_code)):
-
-            value = input_code[number_index]
-
-            # is in secret code
-            if secret_code.count(value) - checked_count[value] > 0:
-
-                # is on correct place in secret code
-                if input_code[number_index] == secret_code[number_index]:
-                    count_good_position += 1
-                else:
-                    count_good_number += 1
-
-                checked_count[value] += 1
+            if input_code[number_index] == secret_code[number_index]:
+                count_good_position += 1
+            if input_code[number_index] != secret_code[number_index] and input_code[number_index] in secret_code:
+                count_good_number += 1
 
         return count_good_position, count_good_number

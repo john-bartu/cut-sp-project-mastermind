@@ -69,13 +69,13 @@ class MainTests(unittest.TestCase):
     def test3_2_bad_pos_2_hit(self):
         game = GameLogic()
 
-        while game.secret_code[2] == game.secret_code[3]:
+        while game.secret_code[1] == game.secret_code[2]:
             game.setup_game()
 
         test = list(game.secret_code)
 
-        temp = test[3]
-        test[3] = test[2]
+        temp = test[1]
+        test[1] = test[2]
         test[2] = temp
 
         print(f"SECRET_CODE: {game.secret_code}")

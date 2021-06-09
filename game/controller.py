@@ -15,3 +15,6 @@ class GameController:
             self.game_logic = GameLogic()
         else:
             self.game_logic = CheatGameLogic()
+
+    def check_if_cheating(self):
+        return isinstance(self.game_logic, CheatGameLogic)
